@@ -117,5 +117,34 @@ To contribute to the project, please follow these steps:
 4. Push changes: `git push origin your-branch`
 5. Create a pull request: `git pull-request`
 
+## 🏗️ Pipeline Architecture
 
+```mermaid
+graph LR
+    %% Styling Classes
+    classDef data fill:#ffe0b2,stroke:#f57c00,stroke-width:2px,color:#000;
+    classDef train fill:#c8e6c9,stroke:#388e3c,stroke-width:2px,color:#000;
+    classDef deploy fill:#bbdefb,stroke:#1976d2,stroke-width:2px,color:#000;
+
+    %% Workflow Nodes
+    subgraph Phase 1: Data
+    A[📁 MSR-VTT 2k Subset]:::data --> B(🎞️ Extract 8 Uniform Frames):::data
+    B --> C[(💾 Save as .npz Tensors)]:::data
+    end
+
+    subgraph Phase 2: BLIP Fine-Tuning
+    C --> D{🎲 Dynamic: Sample 1 Frame}:::train
+    D --> E[🧊 Freeze Vision Encoder]:::train
+    E --> F[🔥 Train Text Decoder]:::train
+    end
+
+    subgraph Phase 3: Inference
+    F --> G[📊 Evaluate Metrics]:::deploy
+    G --> H((🌐 Gradio Web App)):::deploy
+    end
+
+    %% Flow adjustments for compactness
+    style Phase 1 fill:none,stroke:#f57c00,stroke-dasharray: 5 5
+    style Phase 2 fill:none,stroke:#388e3c,stroke-dasharray: 5 5
+    style Phase 3 fill:none,stroke:#1976d2,stroke-dasharray: 5 5
 
