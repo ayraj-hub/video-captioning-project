@@ -1,0 +1,18 @@
+# Core ML & Deep Learning
+torch
+transformers
+
+# Data Processing & Dataset
+datasets
+pandas
+numpy
+
+# Video & Image Processing
+opencv-python
+Pillow
+
+# UIs / Web App
+gradio
+
+# Utilities
+tqdm

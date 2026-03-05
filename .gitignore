@@ -11,6 +11,12 @@ blip_video_model_2_epoch_1/
 blip_video_model_2_epoch_2/
 blip_video_model_2_epoch_3/
 videomaegpt2_model/
+blip_video_model_2*/
+
+
+
+#videomaegpt2 model
+videomaegpt2train.ipynb/
 
 # CSV dataset
 msrvtt_2K_preprocessed.csv
