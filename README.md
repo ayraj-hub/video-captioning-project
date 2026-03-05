@@ -25,7 +25,7 @@ This project is designed to generate captions for videos using a deep learning m
 ## 📦 Installation
 To install the required dependencies, run the following command:
 ```bash
-pip install gradio torch transformers cv2 pillow datasets pandas numpy
+pip install gradio torch transformers opencv-python pillow datasets pandas numpy
 ```
 
 ## 💻 Usage
@@ -46,6 +46,49 @@ video-captioning/
 ├── requirements.txt
 └── README.md
 ```
+
+## 📂 Dataset & Preprocessing
+
+### The MSR-VTT Dataset
+This project utilizes the **MSR-VTT** (Microsoft Research Video to Text) dataset, a large-scale benchmark for video understanding. While the original dataset contains 10,000 video clips, this project uses a curated subset of **2,000 videos** to optimize training time while maintaining a diverse vocabulary and visual range.
+
+The initial dataset was structured in a CSV with the following core columns:
+* `video_id`: A unique identifier for the clip.
+* `captions`: The ground-truth textual descriptions.
+* `video_path`: The local file path to the raw video file.
+
+### 🎞️ Frame Sampling & Preprocessing
+Raw video files (.mp4) are massive and computationally expensive to feed directly into a transformer model. To solve this, we implemented a robust **Frame Sampling** pipeline using OpenCV and NumPy:
+
+1. **Uniform Temporal Sampling**: The script calculates the total frame count and extracts exactly **8 evenly spaced frames** across the video's duration to capture the complete action.
+2. **Visual Standardization**: Each frame is converted to RGB and resized to **224x224 pixels**, matching the BLIP vision encoder's expected input.
+3. **Tensor Formatting**: The 8 frames are stacked and transposed into the shape `(8, 3, 224, 224)` representing `(Frames, Channels, Height, Width)`.
+4. **Efficient Storage (.npz)**: These processed arrays are saved as compressed NumPy files (`.npz`), drastically reducing I/O bottlenecks during training compared to raw videos.
+5. **Automated Cleaning**: The script skips broken or overly short videos and outputs a clean `msrvtt_2k_preprocessed.csv` mapping captions directly to the new `.npz` files.
+
+**💡 Note on Frame Usage:** While the preprocessing pipeline saves 8 frames per video, the PyTorch `Dataset` dynamically samples just **1 random frame** from this set during each training step. This strategy provides temporal variance across multiple epochs without the heavy memory overhead of processing full 3D video tensors.
+
+## 🏋️ Training Overview
+The model was fine-tuned on Apple Silicon (MPS) using a Vision-Frozen Strategy. By freezing the BLIP vision encoder and training only the text decoder, we achieved efficient, high-quality caption generation.
+
+## 📉 Loss Convergence
+The model showed steady optimization over 3 epochs, nearly cutting the initial loss by 35%.
+
+### 📉 Training Loss
+
+| Epoch | Average Loss |
+| :---: | :---: |
+| **1** | 3.0709 |
+| **2** | 2.4607 |
+| **3** | 2.0260 |
+
+## ⚙️ Optimization Highlights
+Frozen Vision Encoder: Reduced trainable parameters to focus on language generation.
+
+Dynamic Frame Sampling: Picks 1 random frame per video each step to improve generalization.
+
+Memory Efficient: Utilizes torch.mps.empty_cache() to maintain performance on Mac hardware.
+
 ## 📊 Evaluation Results
 
 The model was evaluated against a baseline using standard language modeling metrics (BLEU, ROUGE-L, and CIDEr). The final model shows a substantial leap in performance across all categories.
@@ -65,7 +108,6 @@ The model was evaluated against a baseline using standard language modeling metr
 * **Structural Fluency**: The massive increase in **Bleu_4** (+40.63) shows that the model has progressed from generating simple fragments to high-quality, continuous 4-gram sequences.
 * **Overall Recall**: A **ROUGE_L** score of 73.08 suggests the generated captions maintain high structural similarity to the ground truth references.
 
-## 📸 Screenshots
 
 ## 🤝 Contributing
 To contribute to the project, please follow these steps:
@@ -74,4 +116,6 @@ To contribute to the project, please follow these steps:
 3. Make changes and commit: `git commit -m "your-commit-message"`
 4. Push changes: `git push origin your-branch`
 5. Create a pull request: `git pull-request`
+
+
 
