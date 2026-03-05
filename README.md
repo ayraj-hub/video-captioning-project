@@ -59,7 +59,6 @@ The model was evaluated against a baseline using standard language modeling metr
 | **ROUGE_L** | 47.86 | **73.08** | +25.22 |
 | **CIDEr** | 29.92 | **87.39** | **+57.47** |
 
-> **Note:** METEOR metric encountered a computation error during the final evaluation and is excluded from this comparison.
 
 ### 📈 Performance Analysis
 * **Contextual Accuracy**: The **CIDEr** score saw the most significant jump (+57.47), indicating the final model is much better at capturing the specific consensus of the video content rather than just matching common words.
@@ -76,13 +75,3 @@ To contribute to the project, please follow these steps:
 4. Push changes: `git push origin your-branch`
 5. Create a pull request: `git pull-request`
 
-## 📝 License
-The project is licensed under the MIT License.
-
-## 📬 Contact
-For any questions or concerns, please contact us at [your-email@example.com](mailto:your-email@example.com).
-
-## 💖 Thanks Message
-We would like to thank everyone who contributed to the project. This project is a result of collaborative efforts and dedication.
-
-This is written by [readme.ai](https://readme-generator-phi.vercel.app/)
