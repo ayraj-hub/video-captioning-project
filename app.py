@@ -6,7 +6,7 @@ from PIL import Image
 from transformers import BlipProcessor, BlipForConditionalGeneration
 
 
-CHECKPOINT_DIR = "/Users/ayraj/Desktop/video_captioning/blip_video_model_2" 
+CHECKPOINT_DIR = "/blip_video_model_2" 
 DEVICE = "mps" if torch.backends.mps.is_available() else "cpu"
 
 print("Loading BLIP model and processor... This might take a few seconds.")
