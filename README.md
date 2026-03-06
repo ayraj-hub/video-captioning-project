@@ -56,8 +56,8 @@ graph LR
 
 ## 💻 Usage
 To run the project, follow these steps:
-1. Clone the repository: `git clone https://github.com/your-repo/video-captioning.git`
-2. Navigate to the project directory: `cd video-captioning`
+1. Clone the repository: `git clone`
+2. Navigate to the project directory: `cd Ayush_Raj_Video_Captioning`
 3. Install the required dependencies: `pip install -r requirements.txt`
 4. Run the Gradio application: `app.py`
    
