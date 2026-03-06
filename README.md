@@ -1,5 +1,37 @@
 # 🧠 Video Captioning Project
-This project is designed to generate captions for videos using a deep learning model. The core functionality of the project involves loading a pre-trained BLIP model, setting up a Gradio application, and defining the interface for user interaction. The project utilizes the MSR-VTT dataset for training and testing the model. The key features of the project include video captioning, frame sampling, and model training.
+This repository contains a Video-to-Text generation system designed to synthesize descriptive natural language captions from raw video input. By leveraging a BLIP (Bootstrapping Language-Image Pre-training) architecture fine-tuned on the MSR-VTT dataset, the model bridges the gap between temporal visual features and semantic linguistic descriptions.
+
+## 🏗️ Pipeline Architecture
+
+```mermaid
+graph LR
+    %% Styling Classes
+    classDef data fill:#ffe0b2,stroke:#f57c00,stroke-width:2px,color:#000;
+    classDef train fill:#c8e6c9,stroke:#388e3c,stroke-width:2px,color:#000;
+    classDef deploy fill:#bbdefb,stroke:#1976d2,stroke-width:2px,color:#000;
+
+    %% Workflow Nodes
+    subgraph Phase 1: Data
+    A[📁 MSR-VTT 2k Subset]:::data --> B(🎞️ Extract 8 Uniform Frames):::data
+    B --> C[(💾 Save as .npz Tensors)]:::data
+    end
+
+    subgraph Phase 2: BLIP Fine-Tuning
+    C --> D{🎲 Dynamic: Sample 1 Frame}:::train
+    D --> E[🧊 Freeze Vision Encoder]:::train
+    E --> F[🔥 Train Text Decoder]:::train
+    end
+
+    subgraph Phase 3: Inference
+    F --> G[📊 Evaluate Metrics]:::deploy
+    G --> H((🌐 Gradio Web App)):::deploy
+    end
+
+    %% Flow adjustments for compactness
+    style Phase 1 fill:none,stroke:#f57c00,stroke-dasharray: 5 5
+    style Phase 2 fill:none,stroke:#388e3c,stroke-dasharray: 5 5
+    style Phase 3 fill:none,stroke:#1976d2,stroke-dasharray: 5 5
+```
 
 ## 🚀 Features
 - **Video Captioning**: The project uses a pre-trained BLIP model to generate captions for videos.
@@ -10,43 +42,49 @@ This project is designed to generate captions for videos using a deep learning m
 ## 🛠️ Tech Stack
 - **Frontend**: Gradio
 - **Backend**: PyTorch
-- **Database**: None
 - **AI Tools**: Transformers, BLIP model
-- **Build Tools**: None
+
 - **Dependencies**: 
   - `gradio` for creating the web application
   - `torch` for deep learning operations
   - `transformers` for the BLIP model and its processor
-  - `cv2` and `PIL` for image and video processing
+  - `opencv-python` for frame sampling
   - `datasets` for loading the MSR-VTT dataset
   - `pandas` for data manipulation and analysis
   - `numpy` for numerical operations
 
-## 📦 Installation
-To install the required dependencies, run the following command:
-```bash
-pip install gradio torch transformers opencv-python pillow datasets pandas numpy
-```
 
 ## 💻 Usage
 To run the project, follow these steps:
 1. Clone the repository: `git clone https://github.com/your-repo/video-captioning.git`
 2. Navigate to the project directory: `cd video-captioning`
 3. Install the required dependencies: `pip install -r requirements.txt`
-4. Run the Gradio application: `python app.ipynb`
+4. Run the Gradio application: `app.py`
+   
+You can try the live interface here:
+**[Launch Gradio App](https://2c2ed0636868a383ba.gradio.live/)** *(Note: Public Gradio links expire after 72 hours. If the link is down, follow the local setup instructions below.)*
 
-## 📂 Project Structure
-```markdown
+---
+
+##
+📂 Project Structure
+```text
 video-captioning/
-├── app.ipynb
-├── dataset.ipynb
-├── training.ipynb
-├── frame_sampling.ipynb
-├── videomaegpt2train.ipynb
+├── .gitignore
+├── Readme.md
 ├── requirements.txt
-└── README.md
+├── app.py
+├── baseline_evaluation_report.txt
+├── basemodel_evaluation.ipynb
+├── dataset.ipynb
+├── final_evaluation_report.txt
+├── finalmodel_evaluation.ipynb
+├── frame_sampling.ipynb
+├── msrvtt_2k_preprocessed.csv
+├── msrvtt_train_2k_fullcaptions.csv
+├── test.ipynb
+└── training.ipynb
 ```
-
 ## 📂 Dataset & Preprocessing
 
 ### The MSR-VTT Dataset
@@ -109,42 +147,4 @@ The model was evaluated against a baseline using standard language modeling metr
 * **Overall Recall**: A **ROUGE_L** score of 73.08 suggests the generated captions maintain high structural similarity to the ground truth references.
 
 
-## 🤝 Contributing
-To contribute to the project, please follow these steps:
-1. Fork the repository: `git fork https://github.com/your-repo/video-captioning.git`
-2. Create a new branch: `git branch your-branch`
-3. Make changes and commit: `git commit -m "your-commit-message"`
-4. Push changes: `git push origin your-branch`
-5. Create a pull request: `git pull-request`
-
-## 🏗️ Pipeline Architecture
-
-```mermaid
-graph LR
-    %% Styling Classes
-    classDef data fill:#ffe0b2,stroke:#f57c00,stroke-width:2px,color:#000;
-    classDef train fill:#c8e6c9,stroke:#388e3c,stroke-width:2px,color:#000;
-    classDef deploy fill:#bbdefb,stroke:#1976d2,stroke-width:2px,color:#000;
-
-    %% Workflow Nodes
-    subgraph Phase 1: Data
-    A[📁 MSR-VTT 2k Subset]:::data --> B(🎞️ Extract 8 Uniform Frames):::data
-    B --> C[(💾 Save as .npz Tensors)]:::data
-    end
-
-    subgraph Phase 2: BLIP Fine-Tuning
-    C --> D{🎲 Dynamic: Sample 1 Frame}:::train
-    D --> E[🧊 Freeze Vision Encoder]:::train
-    E --> F[🔥 Train Text Decoder]:::train
-    end
-
-    subgraph Phase 3: Inference
-    F --> G[📊 Evaluate Metrics]:::deploy
-    G --> H((🌐 Gradio Web App)):::deploy
-    end
-
-    %% Flow adjustments for compactness
-    style Phase 1 fill:none,stroke:#f57c00,stroke-dasharray: 5 5
-    style Phase 2 fill:none,stroke:#388e3c,stroke-dasharray: 5 5
-    style Phase 3 fill:none,stroke:#1976d2,stroke-dasharray: 5 5
 
